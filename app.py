@@ -37,16 +37,20 @@ def get_api_key(key_name: str) -> str:
 ANTHROPIC_API_KEY = get_api_key("ANTHROPIC_API_KEY")
 TAVILY_API_KEY = get_api_key("TAVILY_API_KEY")
 
-DEMO_MODE = not (ANTHROPIC_API_KEY and TAVILY_API_KEY)
+# Demo mode only if NO Anthropic key (Tavily is optional)
+DEMO_MODE = not ANTHROPIC_API_KEY
+TAVILY_AVAILABLE = bool(TAVILY_API_KEY)
 
 # Conditional imports based on mode
 if not DEMO_MODE:
     try:
-        from langgraph.graph import StateGraph, END
         from langchain_anthropic import ChatAnthropic
-        from tavily import TavilyClient
-        import chromadb
         IMPORTS_AVAILABLE = True
+        # Optional imports - don't fail if missing
+        try:
+            from tavily import TavilyClient
+        except ImportError:
+            TAVILY_AVAILABLE = False
     except ImportError:
         DEMO_MODE = True
         IMPORTS_AVAILABLE = False
@@ -301,13 +305,16 @@ def init_real_components():
         max_tokens=2000
     )
     
-    tavily = TavilyClient(api_key=TAVILY_API_KEY)
+    # Tavily is optional
+    tavily = None
+    if TAVILY_AVAILABLE and TAVILY_API_KEY:
+        try:
+            tavily = TavilyClient(api_key=TAVILY_API_KEY)
+        except:
+            pass
     
-    chroma_client = chromadb.Client()
-    collection = chroma_client.get_or_create_collection(
-        name="research_docs",
-        metadata={"hnsw:space": "cosine"}
-    )
+    # Use mock vector DB (simpler, works everywhere)
+    collection = MockVectorDB()
     
     return llm, tavily, collection
 
@@ -742,7 +749,9 @@ def main():
     
     # Mode indicator
     if DEMO_MODE:
-        st.info("🎭 **DEMO MODE** - Using mock data (no API keys required). Set `ANTHROPIC_API_KEY` and `TAVILY_API_KEY` environment variables for live mode.")
+        st.info("🎭 **DEMO MODE** - Using mock data (no API keys required). Set `ANTHROPIC_API_KEY` environment variable for live mode.")
+    elif not TAVILY_AVAILABLE:
+        st.success("🟢 **LIVE MODE** - Connected to Claude API (web search using mock data)")
     else:
         st.success("🟢 **LIVE MODE** - Connected to Claude API and Tavily")
     
