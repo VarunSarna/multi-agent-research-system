@@ -1,136 +1,108 @@
-# 🚀 Deployment Guide - Multi-Agent Research System
+# Deployment Guide - Multi-Agent Research System
 
-## Step 1: Get Your API Keys
+This guide explains how to run or deploy the multi-agent research demo locally or on Streamlit Cloud.
 
-### Anthropic API Key (for Claude LLM)
+## Step 1: API keys
 
-1. Go to: **https://console.anthropic.com/**
-2. Sign up or log in
-3. Click **"Get API Keys"** in the left sidebar
-4. Click **"Create Key"**
-5. Copy the key (starts with `sk-ant-...`)
-6. **Cost**: Pay-as-you-go, ~$0.003 per 1K input tokens, ~$0.015 per 1K output tokens
-7. **Free credits**: New accounts often get $5 free credits
+### Anthropic API key
 
-### Tavily API Key (for Web Search)
+1. Go to `https://console.anthropic.com/`
+2. Create an API key
+3. Store it as `ANTHROPIC_API_KEY`
 
-1. Go to: **https://tavily.com/**
-2. Click **"Get Started"** or **"Sign Up"**
-3. Verify your email
-4. Go to Dashboard → API Keys
-5. Copy your API key (starts with `tvly-...`)
-6. **Free tier**: 1,000 searches/month FREE! 🎉
+### Tavily API key
+
+1. Go to `https://tavily.com/`
+2. Create an API key
+3. Store it as `TAVILY_API_KEY`
+
+The app also runs in demo mode without API keys.
 
 ---
 
-## Step 2: Push to GitHub
-
-### Option A: Using GitHub Web Interface
-
-1. Go to **https://github.com/new**
-2. Name: `multi-agent-research-system`
-3. Keep it **Public** (required for free Streamlit Cloud)
-4. Click **"Create repository"**
-5. Click **"uploading an existing file"**
-6. Drag and drop ALL these files:
-   - `app.py`
-   - `requirements.txt`
-   - `README.md`
-   - `.gitignore`
-   - `.streamlit/config.toml`
-   - `secrets.toml.example`
-7. Click **"Commit changes"**
-
-### Option B: Using Git Command Line
+## Step 2: Local run
 
 ```bash
-# 1. Create a new folder and copy files there
-mkdir multi-agent-research-system
-cd multi-agent-research-system
+pip install -r requirements.txt
+streamlit run app.py
+```
 
-# 2. Copy all downloaded files here
+Open:
 
-# 3. Initialize git
-git init
-git add .
-git commit -m "Initial commit: Multi-agent research system"
-
-# 4. Create repo on GitHub, then:
-git remote add origin https://github.com/YOUR_USERNAME/multi-agent-research-system.git
-git branch -M main
-git push -u origin main
+```text
+http://localhost:8501
 ```
 
 ---
 
-## Step 3: Deploy to Streamlit Cloud
+## Step 3: Live mode with environment variables
 
-1. Go to: **https://share.streamlit.io/**
-
-2. Click **"New app"**
-
-3. Connect your GitHub if not already done
-
-4. Select:
-   - **Repository**: `YOUR_USERNAME/multi-agent-research-system`
-   - **Branch**: `main`
-   - **Main file path**: `app.py`
-
-5. Click **"Advanced settings"** → **"Secrets"**
-
-6. Paste this (with YOUR real keys):
-   ```toml
-   ANTHROPIC_API_KEY = "sk-ant-your-actual-key-here"
-   TAVILY_API_KEY = "tvly-your-actual-key-here"
-   ```
-
-7. Click **"Deploy!"**
-
-8. Wait 2-3 minutes for deployment
-
-9. 🎉 Your app is live at: `https://your-app-name.streamlit.app`
+```bash
+export ANTHROPIC_API_KEY="sk-ant-your-key"
+export TAVILY_API_KEY="tvly-your-key"
+streamlit run app.py
+```
 
 ---
 
-## Step 4: Share in Your Interview
+## Step 4: Streamlit Cloud deployment
 
-Your live URL will look like:
-```
-https://multi-agent-research-system-yourusername.streamlit.app
+1. Go to `https://share.streamlit.io/`
+2. Create a new app
+3. Select this repository
+4. Set main file path to `app.py`
+5. Add secrets:
+
+```toml
+ANTHROPIC_API_KEY = "sk-ant-your-key"
+TAVILY_API_KEY = "tvly-your-key"
 ```
 
-**Pro tips for the interview:**
-- Open the app before the interview to "warm it up"
-- Have a few example queries ready
-- Show the agent logs to demonstrate observability
-- Mention you can switch between demo and live mode
+6. Deploy
 
 ---
 
 ## Troubleshooting
 
-### "Module not found" error
-→ Check `requirements.txt` is in the repo root
+### Module not found
 
-### "API key not found" error
-→ Check Streamlit Cloud Secrets are set correctly
+Check that `requirements.txt` is in the repository root and Streamlit Cloud installed dependencies successfully.
 
-### App shows "Demo Mode" even with keys
-→ Verify your secrets are named exactly:
-  - `ANTHROPIC_API_KEY`
-  - `TAVILY_API_KEY`
+### API key not found
+
+Check that secrets are named exactly:
+
+```text
+ANTHROPIC_API_KEY
+TAVILY_API_KEY
+```
+
+### App stays in demo mode
+
+Verify secrets/environment variables are configured and restart the app.
 
 ### App crashes on startup
-→ Check the Streamlit Cloud logs (click "Manage app" → "Logs")
+
+Check Streamlit logs and verify dependency versions.
 
 ---
 
-## Cost Estimates
+## Cost notes
 
-| Usage | Anthropic Cost | Tavily Cost |
-|-------|---------------|-------------|
-| 10 queries/day | ~$0.30/day | FREE (1000/month) |
-| Demo in interview | ~$0.05 | FREE |
-| Heavy testing | ~$1-2/day | FREE |
+Live mode uses paid model/search APIs. Demo mode is available for local testing without external API calls.
 
-**Tip**: The demo mode works without any API keys, so you can always fall back to that!
+---
+
+## Production hardening notes
+
+For a production deployment, add:
+
+- authentication
+- persistent state store
+- request limits
+- cost tracking
+- retry/backoff
+- structured logging
+- OpenTelemetry traces
+- eval checks before final report generation
+- deployment-specific secrets management
