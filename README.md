@@ -1,79 +1,134 @@
-# 🤖 Multi-Agent Research System - Documentation
+# Agentic Research Runtime
 
-##  What This Demo Shows
+Production-style reference implementation for an **agentic research workflow**: research planning, tool use, retrieval, analysis, report synthesis, execution logs, and failure-aware orchestration.
 
-This demo shows **production-grade AI agent systems** built. It demonstrates:
+This repository is intentionally structured as an interview/demo project: it runs locally without API keys in demo mode, but also supports live Claude + Tavily execution when credentials are provided.
 
-1. **Multi-agent orchestration** (not just a single LLM call)
-2. **Tool calling** (web search integration)
-3. **RAG architecture** (retrieval-augmented generation)
-4. **State management** (passing context between agents)
-5. **Observability** (logging every step)
-6. **Production patterns** (error handling, metrics)
+## Why this project matters
 
----
+Most “AI agent” demos are just a prompt wrapped in a UI. This project demonstrates the control layer around an LLM workflow:
 
-## Quick Start
+- multi-step agent orchestration
+- shared workflow state
+- tool calling for web search
+- retrieval-augmented analysis
+- execution logs for observability
+- error handling and fallback behaviour
+- demo/live mode separation
+- report synthesis with source tracking
 
-```bash
-# 1. Install (only streamlit needed for demo mode)
-pip install streamlit
+The goal is not to claim this is a full enterprise platform. The goal is to show the core engineering patterns needed before agentic systems can be trusted in production.
 
-# 2. Run
-streamlit run app.py
+## Architecture
 
-# 3. Open http://localhost:8501
+```text
+User Query
+   |
+   v
+Research Agent
+   |-- expands query
+   |-- calls search tool
+   |-- stores source snippets
+   v
+Retrieval / Context Layer
+   |-- keeps searchable context
+   |-- returns relevant chunks
+   v
+Analysis Agent
+   |-- reasons over retrieved context
+   |-- extracts findings, risks, gaps
+   v
+Report Agent
+   |-- synthesizes final answer
+   |-- attaches sources
+   v
+Observability Layer
+   |-- agent logs
+   |-- execution time
+   |-- source count
+   |-- LLM call count
 ```
 
-**That's it!** The demo works without API keys using realistic mock data.
+## Current capabilities
 
-### For Live Mode (Optional)
+- Streamlit UI for running research workflows
+- Demo mode with mock search/vector data
+- Live mode with Anthropic Claude and Tavily search
+- Typed workflow state using `TypedDict`
+- Research, analysis, and report-generation agents
+- RAG-style context retrieval
+- Agent execution log timeline
+- Basic workflow metrics
+- Docker-ready deployment path
+
+## Tech stack
+
+- Python
+- Streamlit
+- Anthropic Claude via LangChain integration
+- Tavily search API
+- LangGraph/LangChain-compatible workflow patterns
+- Mock vector store for no-key demo mode
+- Docker
+
+## Quick start
 
 ```bash
-# Install all dependencies
-pip install streamlit langgraph langchain langchain-anthropic chromadb tavily-python
+pip install -r requirements.txt
+streamlit run app.py
+```
 
-# Set environment variables
+Open:
+
+```text
+http://localhost:8501
+```
+
+The app runs in demo mode without keys.
+
+## Live mode
+
+```bash
 export ANTHROPIC_API_KEY=your_key_here
 export TAVILY_API_KEY=your_key_here
-
-# Run
 streamlit run app.py
 ```
 
----
+## Example use cases
 
+- research assistant for market scans
+- AI-agent workflow demo for interviews
+- agent orchestration pattern reference
+- RAG + tool-use prototype
+- observability demo for multi-step AI workflows
 
-## 📁 File Structure
+## Production hardening roadmap
 
-```
-agent_demo/
-├── app.py              # Main application (Streamlit + agents)
-├── requirements.txt    # Dependencies
-└── README.md           # This documentation
-```
+The current repo is a reference implementation. To make this enterprise-grade, add:
 
----
+- real LangGraph `StateGraph` implementation
+- durable state persistence in Postgres
+- Redis-backed queue and cache
+- tool permission registry
+- human approval gates for risky actions
+- replay/retry controls
+- token/cost accounting
+- OpenTelemetry traces
+- eval checks before final report generation
+- CI pipeline with linting and tests
+- role-based access control
 
-## 🚀 Deployment Options
+## Resume positioning
 
-### Option 1: Streamlit Cloud (Easiest)
+This repo supports the following capability claims:
 
+- Agentic AI workflow design
+- Tool-calling orchestration
+- RAG-style context construction
+- LLM application observability
+- AI-assisted research automation
+- Production-pattern thinking around agents
 
-### Option 2: Local Demo
+## Repository status
 
-
-### Option 3: Docker
-
-```dockerfile
-FROM python:3.11-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-EXPOSE 8501
-CMD ["streamlit", "run", "app.py"]
-```
-
----
-
+Public reference implementation. Suitable for demos and interview walkthroughs; not positioned as a production SaaS product.
