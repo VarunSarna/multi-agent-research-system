@@ -2,7 +2,7 @@
 
 Production-style reference implementation for an **agentic research workflow**: research planning, tool use, retrieval, analysis, report synthesis, execution logs, and failure-aware orchestration.
 
-This repository is intentionally structured as an interview/demo project: it runs locally without API keys in demo mode, but also supports live Claude + Tavily execution when credentials are provided.
+This repository is intentionally structured as a demo/reference project: it runs locally without API keys in demo mode, but also supports live Claude + Tavily execution when credentials are provided.
 
 ## Why this project matters
 
@@ -55,7 +55,7 @@ Observability Layer
 - Demo mode with mock search/vector data
 - Live mode with Anthropic Claude and Tavily search
 - Typed workflow state using `TypedDict`
-- Research, analysis, and report-generation agents
+- Custom sequential orchestration across research, analysis, and report-generation agents
 - RAG-style context retrieval
 - Agent execution log timeline
 - Basic workflow metrics
@@ -67,7 +67,7 @@ Observability Layer
 - Streamlit
 - Anthropic Claude via LangChain integration
 - Tavily search API
-- LangGraph/LangChain-compatible workflow patterns
+- Custom orchestration functions with typed shared state
 - Mock vector store for no-key demo mode
 - Docker
 
@@ -97,7 +97,7 @@ streamlit run app.py
 ## Example use cases
 
 - research assistant for market scans
-- AI-agent workflow demo for interviews
+- AI-agent workflow demo
 - agent orchestration pattern reference
 - RAG + tool-use prototype
 - observability demo for multi-step AI workflows
@@ -131,4 +131,4 @@ This repo supports the following capability claims:
 
 ## Repository status
 
-Public reference implementation. Suitable for demos and interview walkthroughs; not positioned as a production SaaS product.
+Public reference implementation. Suitable for demos and technical walkthroughs; not positioned as a production SaaS product.
